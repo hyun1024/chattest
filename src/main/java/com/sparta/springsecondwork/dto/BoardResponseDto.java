@@ -6,13 +6,13 @@ import lombok.Getter;
 import java.time.LocalDateTime;
 @Getter
 public class BoardResponseDto {
-    private final Long id;
-    private final String subject;
-    private final String username;
-    private final String contents;
-    private final String password;
-    private final LocalDateTime createdAt;
-    private final LocalDateTime modifiedAt;
+    private Long id;
+    private String subject;
+    private String username;
+    private String contents;
+    private String password;
+    private LocalDateTime createdAt;
+    private LocalDateTime modifiedAt;
     public BoardResponseDto(Board board) {
         this.id = board.getId();
         this.subject=board.getSubject();
