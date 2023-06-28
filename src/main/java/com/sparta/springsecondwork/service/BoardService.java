@@ -20,7 +20,7 @@ public class BoardService {
         // RequestDto -> Entity
         Board board = new Board(requestDto);
 
-        Board saveBoard = boardRepository.save(board);
+        boardRepository.save(board);
 
 
         // Entity -> ResponseDto
