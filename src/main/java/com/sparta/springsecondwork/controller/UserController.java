@@ -4,10 +4,10 @@ import com.sparta.springsecondwork.dto.LoginRequestDto;
 import com.sparta.springsecondwork.dto.SignupRequestDto;
 import com.sparta.springsecondwork.service.UserService;
 import jakarta.servlet.http.HttpServletResponse;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.*;
 
 @Controller
 @RequestMapping("/api")
@@ -18,21 +18,11 @@ public class UserController {
         this.userService = userService;
     }
 
-    @GetMapping("/user/login-page")
-    public String loginPage() {
-        return "login";
-    }
-
-    @GetMapping("/user/signup")
-    public String signupPage() {
-        return "signup";
-    }
-
     @PostMapping("/user/signup")
     public String signup(SignupRequestDto requestDto){
         userService.signup(requestDto);
 
-        return "redirect:/api/user/login-page";
+        return "redirect:/";
     }
 
     @PostMapping("/user/login")
@@ -45,5 +35,14 @@ public class UserController {
         }
 
         return "redirect:/api/board?username="+username;
+    }
+
+    @ExceptionHandler(NullPointerException.class)
+    public ResponseEntity<String> NotFoundExceptionHandler(NullPointerException e){
+        return ResponseEntity.status(HttpStatus.NOT_FOUND).body(e.getMessage());
+    }
+    @ExceptionHandler(IllegalArgumentException.class)
+    public ResponseEntity<String> IllegalExceptionHandler(IllegalArgumentException e){
+        return ResponseEntity.status(HttpStatus.NOT_FOUND).body(e.getMessage());
     }
 }
