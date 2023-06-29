@@ -3,6 +3,7 @@ package com.sparta.springsecondwork.service;
 import com.sparta.springsecondwork.dto.BoardRequestDto;
 import com.sparta.springsecondwork.dto.BoardResponseDto;
 import com.sparta.springsecondwork.entity.Board;
+import com.sparta.springsecondwork.jwt.JwtUtil;
 import com.sparta.springsecondwork.repository.BoardRepository;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -12,14 +13,15 @@ import java.util.List;
 @Service
 public class BoardService {
     private final BoardRepository boardRepository;
+    private final JwtUtil jwtUtil;
 
-    public BoardService(BoardRepository boardRepository){
+    public BoardService(BoardRepository boardRepository, JwtUtil jwtUtil){
         this.boardRepository=boardRepository;
+        this.jwtUtil=jwtUtil;
     }
     public BoardResponseDto createBoard(BoardRequestDto requestDto) {
         // RequestDto -> Entity
         Board board = new Board(requestDto);
-
         boardRepository.save(board);
 
 
@@ -28,9 +30,13 @@ public class BoardService {
 
         return boardResponseDto;
     }
-    public List<BoardResponseDto> getBoards() {
-        return boardRepository.findAllByOrderByCreatedAtDesc().stream().map(BoardResponseDto::new).toList();
-
+//    public List<BoardResponseDto> getBoards() {
+//        return boardRepository.findAllByOrderByCreatedAtDesc().stream().map(BoardResponseDto::new).toList();
+//
+//    }
+    public List<BoardResponseDto> getBoards(String username) {
+        System.out.println(username);
+        return boardRepository.findAllByUsername(username).stream().map(BoardResponseDto::new).toList();
     }
 
     public BoardResponseDto getABoard(Long id) {
@@ -62,7 +68,7 @@ public class BoardService {
     }
 
     private Board findBoard(Long id){
-        return boardRepository.findById(id).orElseThrow(()-> new IllegalArgumentException("선택한 게시글은 존재하지 않습니다"));
+        return boardRepository.findById(id).orElseThrow(()-> new NullPointerException("선택한 게시글은 존재하지 않습니다"));
     }
 
     private boolean checkPassword(Board board, BoardRequestDto requestDto) {
