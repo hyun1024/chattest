@@ -69,7 +69,7 @@ public class UserService {
 
     public void login(LoginRequestDto requestDto, HttpServletResponse res) {
         String username= requestDto.getUsername();
-        String password = passwordEncoder.encode(requestDto.getPassword());
+        String password =requestDto.getPassword();
 
         User user = userRepository.findByUsername(username).orElseThrow(
                 ()->new IllegalArgumentException("등록된 사용자가 없습니다.")
