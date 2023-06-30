@@ -11,6 +11,7 @@ import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
 import java.util.Optional;
+import java.util.regex.Pattern;
 
 @Service
 public class UserService {
@@ -54,7 +55,11 @@ public class UserService {
             }
             role = UserRoleEnum.ADMIN;
         }
-
+        // 이름과 비밀번호 양식
+        String nameVal= "^[a-z0-9]{4,10}$";
+        String passVal="^[a-zA-Z0-9]{8,15}$";
+        if(!Pattern.matches(nameVal, username)) throw new IllegalArgumentException("이름이 올바르지 않습니다.");
+        if(!Pattern.matches(passVal, requestDto.getPassword())) throw new IllegalArgumentException("비밀번호가 올바르지 않습니다.");
         // 사용자 등록
         User user = new User(username, password, email, role);
         userRepository.save(user);

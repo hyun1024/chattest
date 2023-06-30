@@ -35,13 +35,11 @@ public class BoardService {
 //
 //    }
     public List<BoardResponseDto> getBoards(String username) {
-        System.out.println(username);
         return boardRepository.findAllByUsername(username).stream().map(BoardResponseDto::new).toList();
     }
 
-    public BoardResponseDto getABoard(Long id) {
-        Board board = findBoard(id);
-        return new BoardResponseDto(board);
+    public List<BoardResponseDto> getAllBoard() {
+        return boardRepository.findAll().stream().map(BoardResponseDto::new).toList();
     }
     @Transactional
     public Long updateBoard(Long id, BoardRequestDto requestDto) {

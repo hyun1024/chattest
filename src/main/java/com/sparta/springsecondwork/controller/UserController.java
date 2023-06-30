@@ -7,7 +7,9 @@ import jakarta.servlet.http.HttpServletResponse;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
-import org.springframework.web.bind.annotation.*;
+import org.springframework.web.bind.annotation.ExceptionHandler;
+import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestMapping;
 
 @Controller
 @RequestMapping("/api")
@@ -22,7 +24,7 @@ public class UserController {
     public String signup(SignupRequestDto requestDto){
         userService.signup(requestDto);
 
-        return "redirect:/";
+        return "redirect:/api/user/login-page";
     }
 
     @PostMapping("/user/login")
@@ -34,7 +36,7 @@ public class UserController {
             return "redirect:/api/user/login-page?error";
         }
 
-        return "redirect:/api/board?username="+username;
+        return "redirect:/api/board";
     }
 
     @ExceptionHandler(NullPointerException.class)
@@ -43,6 +45,6 @@ public class UserController {
     }
     @ExceptionHandler(IllegalArgumentException.class)
     public ResponseEntity<String> IllegalExceptionHandler(IllegalArgumentException e){
-        return ResponseEntity.status(HttpStatus.NOT_FOUND).body(e.getMessage());
+        return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(e.getMessage());
     }
 }

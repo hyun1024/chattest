@@ -5,8 +5,10 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Board Service</title>
-
+  <script src="https://code.jquery.com/jquery-3.7.0.min.js" integrity="sha256-2Pmvv0kuTBOenSvLm6bvfBSSHrUJ+3A7x6P5Ebd07/g=" crossorigin="anonymous"></script>
+  <script src="https://cdn.jsdelivr.net/npm/js-cookie@3.0.5/dist/js.cookie.min.js"></script>
   <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
+  <script src="/js/basic.js"></script>
   <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+KR:wght@500&display=swap" rel="stylesheet">
 
   <style>
@@ -281,7 +283,6 @@
         type: 'GET',
         url: '/api/board',
         success: function(){
-          console.log("a-check");
           getMessages();
         }
       })
@@ -291,7 +292,6 @@
     // 게시글을 불러와서 보여줍니다.
     function getMessages() {
       let username=$('#usersave').text();
-      console.log(username);
       // 1. 기존 게시글 내용을 지웁니다.
       $('#cards-box').empty();
       // 2. 게시글 목록을 불러와서 HTML로 붙입니다.
@@ -326,11 +326,6 @@
             addHTML(id, subject, username, contents, createdAt);
           }
       })
-    }
-    function usernamesaver(user){
-      $('#1-usernamesaver').empty();
-      let tempHtml = `<h2 class="username" id=usernamesave>${user} 의 게시판</h2>`
-      $('#1-usernamesaver').append(tempHtml);
     }
     // 메모 하나를 HTML로 만들어서 body 태그 내 원하는 곳에 붙입니다.
     function addHTML(id, subject, username, contents, createdAt) {
@@ -372,7 +367,7 @@
 
     // 메모를 생성합니다.
     function writePost() {
-      let username = $('#username').val();
+      let username = $('#usersave').text();
       let contents = $('#contents').val();
       let subject = $('#subject').val();
       let password = $('#password').val();
@@ -450,8 +445,8 @@
 </div>
 <div class="wrap">
   <div class="header">
-    <h2 id="1-usernamesaver">Board</h2>
-    <h1>Welcome, <span id ="usersave" th:text="${username}"></span></h1>
+    <h2>Board</h2>
+    <h1 style="color: midnightblue">Welcome, <span style="color: midnightblue"id ="usersave" th:text="${username}"></span></h1>
     <a id="login-text" href="javascript:logout()">
       로그아웃
     </a>
@@ -461,7 +456,6 @@
   </div>
   <div class="area-write">
     <textarea class ="field2" placeholder="글 제목" name="subject" id="subject" cols="30" rows="10"></textarea>
-    <textarea class ="field2" palceholder="닉네임" name="username" id="username" cols="30" rows="10"></textarea>
     <textarea class ="field2" placeholder="비밀번호" name="password" id="password" cols="30" rows="10"></textarea>
         <textarea class="field" placeholder="공유하고 싶은 소식을 입력해주세요" name="contents" id="contents" cols="30"
                   rows="10"></textarea>

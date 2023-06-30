@@ -17,7 +17,6 @@ public class LoggingFilter implements Filter {
         // 전처리
         HttpServletRequest httpServletRequest = (HttpServletRequest) request;
         String url = httpServletRequest.getRequestURI();
-        log.info(url);
 
         chain.doFilter(request, response); // 다음 Filter 로 이동
 

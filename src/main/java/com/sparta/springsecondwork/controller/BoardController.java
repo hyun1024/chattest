@@ -24,25 +24,9 @@ public class BoardController {
 
     @GetMapping("/board/{username}")
     public List<BoardResponseDto> getBoards(@PathVariable String username) {
-        System.out.println(username);
-        return boardService.getBoards(username);
+        return boardService.getAllBoard();
     }
 
-//  @GetMapping("/board")
-//    public String getTemplates() {
-//        List<BoardResponseDto> board = boardService.getBoards();
-//        model.addAttribute("board", board);
-//        System.out.println(model);
-//        return "board";
-//    }
-//    @GetMapping("/board/{id}")
-//    public BoardResponseDto getABoard(@PathVariable Long id){
-//        return boardService.getABoard(id);
-//    }
-//    @GetMapping("/board/{id}")
-//    public BoardResponseDto getABoard(@PathVariable Long id){
-//        return boardService.getABoard(id);
-//    }
     @PutMapping("/board/{id}")
     public Long updateBoard(@PathVariable Long id, @RequestBody BoardRequestDto requestDto) {
         return boardService.updateBoard(id, requestDto);
@@ -53,13 +37,13 @@ public class BoardController {
         return boardService.deleteBoard(id, requestDto);
     }
 
-    @ExceptionHandler(NullPointerException.class)
-    public ResponseEntity<String> NotFoundExceptionHandler(NullPointerException e){
-        return ResponseEntity.status(HttpStatus.NOT_FOUND).body(e.getMessage());
-    }
-    @ExceptionHandler(IllegalArgumentException.class)
-    public ResponseEntity<String> IllegalExceptionHandler(IllegalArgumentException e){
-        return ResponseEntity.status(HttpStatus.NOT_FOUND).body(e.getMessage());
-    }
+//    @ExceptionHandler(NullPointerException.class)
+//    public ResponseEntity<String> NotFoundExceptionHandler(NullPointerException e){
+//        return ResponseEntity.status(HttpStatus.NOT_FOUND).body(e.getMessage());
+//    }
+//    @ExceptionHandler(IllegalArgumentException.class)
+//    public ResponseEntity<String> IllegalExceptionHandler(IllegalArgumentException e){
+//        return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(e.getMessage());
+//    }
 }
 
