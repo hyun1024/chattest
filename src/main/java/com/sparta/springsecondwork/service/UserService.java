@@ -7,6 +7,8 @@ import com.sparta.springsecondwork.entity.UserRoleEnum;
 import com.sparta.springsecondwork.jwt.JwtUtil;
 import com.sparta.springsecondwork.repository.UserRepository;
 import jakarta.servlet.http.HttpServletResponse;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
@@ -67,7 +69,7 @@ public class UserService {
 
     public void login(LoginRequestDto requestDto, HttpServletResponse res) {
         String username= requestDto.getUsername();
-        String password = requestDto.getPassword();
+        String password = passwordEncoder.encode(requestDto.getPassword());
 
         User user = userRepository.findByUsername(username).orElseThrow(
                 ()->new IllegalArgumentException("등록된 사용자가 없습니다.")

@@ -29,7 +29,6 @@ public class UserController {
 
     @PostMapping("/user/login")
     public String login(LoginRequestDto requestDto, HttpServletResponse res){
-        String username = requestDto.getUsername();
         try {
             userService.login(requestDto, res);
         } catch (Exception e) {

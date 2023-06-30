@@ -42,38 +42,30 @@ public class BoardService {
         return boardRepository.findAll().stream().map(BoardResponseDto::new).toList();
     }
     @Transactional
-    public Long updateBoard(Long id, BoardRequestDto requestDto) {
+    public String updateBoard(Long postId, BoardRequestDto requestDto) {
         // 해당 메모가 DB에 존재하는지 확인
-        Board board= findBoard(id);
+        Board board= findBoard(postId);
         // board 내용 수정
-        if(checkPassword(board, requestDto)) {
+        if(board.getUsername().equals(requestDto.getUsername())) {
             board.update(requestDto);
-            return id;
-        } else{
-            throw new IllegalArgumentException("비밀 번호가 틀립니다.");
-        }
-
-    }
-    public Long deleteBoard(Long id, BoardRequestDto requestDto) {
-        // 해당 메모가 DB에 존재하는지 확인
-        Board board = findBoard(id);
-        if(board != null && checkPassword(board, requestDto)) {
-            boardRepository.delete(board);
-            return id;
+            return "업데이트가 완료되었습니다.";
         } else {
-            throw new IllegalArgumentException("없는 게시글입니다.");
+            throw new IllegalArgumentException("본인의 글이 아닙니다.");
+        }
+
+    }
+    public String deleteBoard(Long postId, BoardRequestDto requestDto) {
+        // 해당 메모가 DB에 존재하는지 확인
+        Board board = findBoard(postId);
+        if(board.getUsername().equals(requestDto.getUsername())){
+            boardRepository.delete(board);
+            return "성공적으로 삭제되었습니다.";
+        } else {
+            throw new IllegalArgumentException("본인의 글이 아닙니다.");
         }
     }
 
-    private Board findBoard(Long id){
-        return boardRepository.findById(id).orElseThrow(()-> new NullPointerException("선택한 게시글은 존재하지 않습니다"));
-    }
-
-    private boolean checkPassword(Board board, BoardRequestDto requestDto) {
-       String inputPassword = requestDto.getPassword();
-       String dataPassword = board.getPassword();
-       if(inputPassword.equals(dataPassword)){
-           return true;
-       } else {throw new IllegalArgumentException("비밀 번호가 틀립니다.");}
+    private Board findBoard(Long postId){
+        return boardRepository.findById(postId).orElseThrow(()-> new NullPointerException("선택한 게시글은 존재하지 않습니다"));
     }
 }

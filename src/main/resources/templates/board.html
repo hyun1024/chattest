@@ -300,12 +300,12 @@
         success: function (response) {
           for (let i = 0; i < response.length; i++) {
             let message = response[i];
-            let id = message['id'];
+            let postId = message['postId'];
             let subject = message['subject'];
             let username = message['username'];
             let contents = message['contents'];
             let createdAt = message['createdAt'];
-            addHTML(id, subject, username, contents, createdAt);
+            addHTML(postId, subject, username, contents, createdAt);
           }
         }
       })
@@ -319,18 +319,18 @@
         success: function (response) {
           for (let i = 0; i < response.length; i++) {
             let message = response[i];
-            let id = message['id'];
+            let postId = message['postId'];
             let subject = message['subject'];
             let username = message['username'];
             let contents = message['contents'];
             let createdAt = message['createdAt'];
-            addHTML(id, subject, username, contents, createdAt);
+            addHTML(postId, subject, username, contents, createdAt);
           }
         }
       })
     }
     // 메모 하나를 HTML로 만들어서 body 태그 내 원하는 곳에 붙입니다.
-    function addHTML(id, subject, username, contents, createdAt) {
+    function addHTML(postId, subject, username, contents, createdAt) {
       // 1. HTML 태그를 만듭니다.
       let tempHtml = `<div class="card">
                 <!-- date/username 영역 -->
@@ -338,29 +338,28 @@
                     <div class="date">
                         ${createdAt}
                     </div>
-                    <div id="${id}-username" class="username">
+                    <div id="${postId}-username" class="username">
                         ${username}
                     </div>
                 </div>
                 <!-- contents 조회/수정 영역-->
                 <div class="contents">
-                    <div id ="${id}-subject" class="subject">
+                    <div id ="${postId}-subject" class="subject">
                         ${subject}
                     </div>
-                    <div id="${id}-contents" class="text">
+                    <div id="${postId}-contents" class="text">
                         ${contents}
                     </div>
-                    <div id="${id}-editarea" class="edit">
-                        <textarea id="${id}-esubject" class="te-edit2" name="" id="" cols="30" rows="5"></textarea>
-                        <textarea id="${id}-passarea" class="te-edit2" placeholder="비밀번호" name="" id="" cols="30" rows="5"></textarea>
-                        <textarea id="${id}-textarea" class="te-edit" name="" id="" cols="30" rows="5"></textarea>
+                    <div id="${postId}-editarea" class="edit">
+                        <textarea id="${postId}-esubject" class="te-edit2" name="" id="" cols="30" rows="5"></textarea>
+                        <textarea id="${postId}-textarea" class="te-edit" name="" id="" cols="30" rows="5"></textarea>
                     </div>
                 </div>
                 <!-- 버튼 영역-->
                 <div class="footer">
-                    <img id="${id}-edit" class="icon-start-edit" src="/images/edit.png" alt="" onclick="editPost('${id}')">
-                    <img id="${id}-delete" class="icon-delete" src="/images/delete.png" alt="" onclick="deleteOne('${id}')">
-                    <img id="${id}-submit" class="icon-end-edit" src="/images/done.png" alt="" onclick="submitEdit('${id}')">
+                    <img id="${postId}-edit" class="icon-start-edit" src="/images/edit.png" alt="" onclick="editPost('${postId}')">
+                    <img id="${postId}-delete" class="icon-delete" src="/images/delete.png" alt="" onclick="deleteOne('${postId}')">
+                    <img id="${postId}-submit" class="icon-end-edit" src="/images/done.png" alt="" onclick="submitEdit('${postId}')">
                 </div>
             </div>`;
       // 2. #cards-box 에 HTML을 붙인다.
@@ -372,13 +371,12 @@
       let username = $('#usersave').text();
       let contents = $('#contents').val();
       let subject = $('#subject').val();
-      let password = $('#password').val();
       // 2. 작성한 글이 올바른지 isValidContents 함수를 통해 확인합니다.
       if (isValidContents(contents) == false) {
         return;
       }
       // 4. 전달할 data JSON으로 만듭니다.
-      let data = {'subject': subject, 'username': username, 'contents': contents, 'password':password};
+      let data = {'subject': subject, 'username': username, 'contents': contents};
 
       // 5. POST /api/board 에 data를 전달합니다.
       $.ajax({
@@ -389,49 +387,62 @@
         success: function (response) {
           alert('메시지가 성공적으로 작성되었습니다.');
           window.location.reload();
+        },
+        error: function(xhr, status, error) {
+          let errorMessage = xhr.responseText;
+          alert(errorMessage);
+          window.location.reload();
         }
       });
     }
 
     // 메모를 수정합니다.
-    function submitEdit(id) {
+    function submitEdit(postId) {
       // 1. 작성 대상 글의의 username과 contents 를 확인합니다.
-      let subject = $(`#${id}-esubject`).val().trim();
-      let username = $(`#${id}-username`).text().trim();
-      let contents = $(`#${id}-textarea`).val().trim();
-      let password = $(`#${id}-passarea`).val().trim();
+      let subject = $(`#${postId}-esubject`).val();
+      let username = $(`#usersave`).text();
+      let contents = $(`#${postId}-textarea`).val();
       // 2. 작성한 게시글이 올바른지 isValidContents 함수를 통해 확인합니다.
       if (isValidContents(contents) == false) {
         return;
       }
 
       // 3. 전달할 data JSON으로 만듭니다.
-      let data = {'subject': subject, 'username': username, 'contents': contents, 'password':password};
+      let data = {'subject': subject, 'username': username, 'contents': contents};
 
       // 4. PUT /api/memos/{id} 에 data를 전달합니다.
       $.ajax({
         type: "PUT",
-        url: `/api/board/${id}`,
+        url: `/api/board/${postId}`,
         contentType: "application/json",
         data: JSON.stringify(data),
         success: function (response) {
-          alert('게시글 변경에 성공하였습니다.');
+          alert(response);
           window.location.reload();
+        },
+        error: function(xhr, status, error) {
+          let errorMessage = xhr.responseText;
+          alert(errorMessage);
         }
-      });
+      })
     }
-    function deleteOne(id) {
-      let password = $(`#${id}-passarea`).val().trim();
-      let data= {'password': password};
+    function deleteOne(postId) {
+      let username = $(`#usersave`).text();
+      let data= {'username':username};
       // 1. DELETE /api/board/{id} 에 요청해서 글을 삭제합니다.
       $.ajax({
         type: "DELETE",
-        url: `/api/board/${id}`,
+        url: `/api/board/${postId}`,
         contentType: "application/json",
         data: JSON.stringify(data),
         success: function (response) {
-          alert('메시지 삭제에 성공하였습니다.');
+          alert(response);
           window.location.reload();
+        },
+        error: function(xhr, status, error) {
+          let errorMessage = xhr.responseText;
+          alert(errorMessage);
+          // 오류 메시지를 처리하는 로직
         }
       })
     }
@@ -460,9 +471,7 @@
   </div>
   <div class="area-write">
     <textarea class ="field2" placeholder="글 제목" name="subject" id="subject" cols="30" rows="10"></textarea>
-    <textarea class ="field2" placeholder="비밀번호" name="password" id="password" cols="30" rows="10"></textarea>
-        <textarea class="field" placeholder="공유하고 싶은 소식을 입력해주세요" name="contents" id="contents" cols="30"
-                  rows="10"></textarea>
+    <textarea class="field" placeholder="공유하고 싶은 소식을 입력해주세요" name="contents" id="contents" cols="30" rows="10"></textarea>
     <!--            <button class="btn btn-danger" onclick="writePost()">작성하기</button>-->
     <img src="/images/send.png" alt="" onclick="writePost()">
   </div>
