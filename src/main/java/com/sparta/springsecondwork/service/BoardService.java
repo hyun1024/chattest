@@ -34,7 +34,7 @@ public class BoardService {
 //        return boardRepository.findAllByOrderByCreatedAtDesc().stream().map(BoardResponseDto::new).toList();
 //
 //    }
-    public List<BoardResponseDto> getBoards(String username) {
+    public List<BoardResponseDto> getUsersBoards(String username) {
         return boardRepository.findAllByUsername(username).stream().map(BoardResponseDto::new).toList();
     }
 

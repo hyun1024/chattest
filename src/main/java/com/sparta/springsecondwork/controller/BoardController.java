@@ -3,8 +3,6 @@ package com.sparta.springsecondwork.controller;
 import com.sparta.springsecondwork.dto.BoardRequestDto;
 import com.sparta.springsecondwork.dto.BoardResponseDto;
 import com.sparta.springsecondwork.service.BoardService;
-import org.springframework.http.HttpStatus;
-import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
@@ -22,9 +20,16 @@ public class BoardController {
         return boardService.createBoard(requestDto);
     }
 
-    @GetMapping("/board/{username}")
-    public List<BoardResponseDto> getBoards(@PathVariable String username) {
+    @GetMapping("/board/all")
+    public List<BoardResponseDto> getAllBoards() {
         return boardService.getAllBoard();
+    }
+    @GetMapping("/board/{username}")
+    public List<BoardResponseDto> getUsersBoards(@PathVariable String username) {
+        if ("all".equals(username)) {
+            return boardService.getAllBoard();
+        }
+        return boardService.getUsersBoards(username);
     }
 
     @PutMapping("/board/{id}")

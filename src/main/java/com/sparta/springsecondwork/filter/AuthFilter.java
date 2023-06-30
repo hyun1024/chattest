@@ -6,6 +6,7 @@ import com.sparta.springsecondwork.repository.UserRepository;
 import io.jsonwebtoken.Claims;
 import jakarta.servlet.*;
 import jakarta.servlet.http.HttpServletRequest;
+import jakarta.servlet.http.HttpServletResponse;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.core.annotation.Order;
 import org.springframework.stereotype.Component;
@@ -29,8 +30,8 @@ public class AuthFilter implements Filter {
     @Override
     public void doFilter(ServletRequest request, ServletResponse response, FilterChain chain) throws IOException, ServletException {
         HttpServletRequest httpServletRequest = (HttpServletRequest) request;
+        HttpServletResponse httpServletResponse = (HttpServletResponse) response;
         String url = httpServletRequest.getRequestURI();
-
         if (StringUtils.hasText(url) &&
                 (url.startsWith("/api/user") || url.startsWith("/css") || url.startsWith("/js") || url.startsWith("/api/images"))
         ) {
@@ -47,19 +48,20 @@ public class AuthFilter implements Filter {
 
                 // 토큰 검증
                 if (!jwtUtil.validateToken(token)) {
+                    httpServletResponse.setStatus(HttpServletResponse.SC_UNAUTHORIZED);
                     throw new IllegalArgumentException("Token Error");
+
                 }
 
                 // 토큰에서 사용자 정보 가져오기
                 Claims info = jwtUtil.getUserInfoFromToken(token);
-
                 User user = userRepository.findByUsername(info.getSubject()).orElseThrow(() ->
                         new NullPointerException("Not Found User")
                 );
-
                 request.setAttribute("user", user);
                 chain.doFilter(request, response); // 다음 Filter 로 이동
             } else {
+                httpServletResponse.setStatus(HttpServletResponse.SC_UNAUTHORIZED);
                 throw new IllegalArgumentException("Not Found Token");
             }
         }

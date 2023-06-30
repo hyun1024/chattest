@@ -291,13 +291,12 @@
 
     // 게시글을 불러와서 보여줍니다.
     function getMessages() {
-      let username=$('#usersave').text();
       // 1. 기존 게시글 내용을 지웁니다.
       $('#cards-box').empty();
       // 2. 게시글 목록을 불러와서 HTML로 붙입니다.
       $.ajax({
         type: 'GET',
-        url: `/api/board/${username}`,
+        url: '/api/board/all',
         success: function (response) {
           for (let i = 0; i < response.length; i++) {
             let message = response[i];
@@ -312,12 +311,14 @@
       })
     }
     function getAMessage(id){
+      let username=$('#usersave').text();
       $('#cards-box').empty();
       $.ajax({
         type: 'GET',
-        url: `/api/board/${id}`,
+        url: `/api/board/${username}`,
         success: function (response) {
-            let message = response;
+          for (let i = 0; i < response.length; i++) {
+            let message = response[i];
             let id = message['id'];
             let subject = message['subject'];
             let username = message['username'];
@@ -325,6 +326,7 @@
             let createdAt = message['createdAt'];
             addHTML(id, subject, username, contents, createdAt);
           }
+        }
       })
     }
     // 메모 하나를 HTML로 만들어서 body 태그 내 원하는 곳에 붙입니다.
@@ -447,9 +449,11 @@
   <div class="header">
     <h2>Board</h2>
     <h1 style="color: midnightblue">Welcome, <span style="color: midnightblue"id ="usersave" th:text="${username}"></span></h1>
-    <a id="login-text" href="javascript:logout()">
-      로그아웃
-    </a>
+
+    <div><button onclick="getAMessage()">내 글 보기</button> <button onclick = "getMessages()" style="margin-left:20px"> 전체 글 보기</button>
+      <a id="login-text" href="javascript:logout()" style="margin-left:100px">
+        로그아웃
+      </a></div>
     <p>
       공유하고 싶은 소식을 입력해주세요.
     </p>
