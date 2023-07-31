@@ -10,4 +10,5 @@ public class BoardRequestDto {
     private String asdf;
     private String qwer;
     private String zxcv;
+    private String qda;
 }
