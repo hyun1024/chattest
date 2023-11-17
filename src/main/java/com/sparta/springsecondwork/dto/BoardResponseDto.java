@@ -20,4 +20,12 @@ public class BoardResponseDto {
         this.createdAt=createdAt;
         this.modifiedAt=modifiedAt;
     }
+    public BoardResponseDto(Board board) {
+        this.postId = board.getPostId();
+        this.subject=board.getSubject();
+        this.username=board.getUsername();
+        this.contents=board.getContents();
+        this.createdAt=board.getCreatedAt();
+        this.modifiedAt=board.getModifiedAt();
+    }
 }
